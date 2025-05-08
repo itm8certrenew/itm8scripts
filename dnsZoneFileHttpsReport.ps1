@@ -26,7 +26,7 @@ $ScriptTerminationSleep = 30;
 #
 ### Script
 $ThisDomain = $null
-$SupportedOS = IF (!((((Get-WmiObject -class Win32_OperatingSystem).Caption) -notlike "*Server 2016*") -and ((([Environment]::OSVersion).version) -ge [Version]‘10.0.0.0’) )) {
+$SupportedOS = IF (!((((Get-WmiObject -class Win32_OperatingSystem).Caption) -notlike "*Server 2016*") -and ((([Environment]::OSVersion).version) -ge [Version]"10.0.0.0") )) {
   Write-Host "`n  Os is not supported to run from Github!`n  -- Run a local version of this script --`n`n  Script will terminate!`n";
   Sleep $ScriptTerminationSleep;
   Break;};
