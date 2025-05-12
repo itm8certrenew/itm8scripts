@@ -11,7 +11,8 @@ SSL Ports:
 10443
 10444
 
-NAV ports: 
+NAV & Business Central Ports:
+7045 - Business Central Port
 7046
 7047 - Web services default port
 7048
@@ -20,7 +21,7 @@ NAV ports:
 #>
 
 ### Variables
-$SSLPorts = @("443", "444", "8443", "8444", "9443", "9444", "10443", "10444", "7046", "7047", "7048", "8145", "8146"); # $SSLPorts-functionallity Added 2025-05-04 /JOHHO
+$SSLPorts = @("443", "444", "8443", "8444", "9443", "9444", "10443", "10444", "7045", "7046", "7047", "7048", "8145", "8146"); # $SSLPorts-functionallity Added 2025-05-04 /JOHHO
 $Paths = @("C:\itm8", "C:\ITR", "$([Environment]::GetFolderPath("Desktop"))"); # 2025-05-06 /JOHHO
 $ScriptTerminationSleep = 30;
 #
