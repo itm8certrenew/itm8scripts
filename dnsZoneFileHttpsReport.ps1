@@ -1,15 +1,11 @@
-### Name: dnsZoneFileHttpsReport.ps1 - Lookup SSL Certificates - By John Holst (JOHHO) and Bjarke Frost Stabell (BJFST), ITM8
+### Name: dnsZoneFileHttpsReport.ps1 - Lookup SSL Certificates - By John Holst (JOHHO), ITM8, and Bjarke Frost Stabell (BJFST), ITM8
 
 <#
 SSL Ports:
-443
-444
-8443
-8444
-9443
-9444
-10443
-10444
+443, 444
+8443, 8444
+9443, 9444
+10443, 10444
 
 NAV & Business Central Ports:
 7045 - Business Central Port
