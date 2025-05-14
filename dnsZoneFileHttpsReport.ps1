@@ -22,18 +22,10 @@ NAV & Business Central Ports:
 ### Variables
 $SSLPorts = @("443", "444", "8443", "8444", "9443", "9444", "10443", "10444", "7045", "7046", "7047", "7048", "7295", "7397", "7747", "8145", "8146"); # $SSLPorts-functionallity Added 2025-05-04 /JOHHO
 $Paths = @("C:\itm8", "C:\ITR", "$([Environment]::GetFolderPath("Desktop"))"); # 2025-05-06 /JOHHO
-$ScriptTerminationSleep = 30;
+$ScriptTerminationSleep = 20;
 #
 ### Script
 $ThisDomain = $null
-$SupportedOSScriptBlock = {Write-Host "`n  OS is not supported to run from Github!`n  -- Run a local version of this script --`n`n  Script will terminate!`n"; Sleep $ScriptTerminationSleep; Break;}
-$SupportedOS = If (!(((get-location).Path) -like "[c|d|e]:\*")) {
-    IF (!((((Get-WmiObject -class Win32_OperatingSystem).Caption) -notlike "*Server 2016*") -and ((([Environment]::OSVersion).version) -ge [Version]"10.0.0.0") )) {Invoke-Command $SupportedOSScriptBlock}
-};
-#$SupportedOS = If (((get-location).Path) -like "[c|d|e]:\*" ) {IF (!((((Get-WmiObject -class Win32_OperatingSystem).Caption) -notlike "*Server 2016*") -and ((([Environment]::OSVersion).version) -ge [Version]"10.0.0.0") )) {
-#  Write-Host "`n  Os is not supported to run from Github!`n  -- Run a local version of this script --`n`n  Script will terminate!`n";
-#  Sleep $ScriptTerminationSleep; 
-#  Break;}};
 ## Add system functions
 Add-Type -AssemblyName System.Windows.Forms
 # $PSScriptRoot = Split-Path -Parent $($MyInvocation.MyCommand.Path); # 2025-03-31 JOHHO/ verified issue with Path: $($MyInvocation.MyCommand.Path)
