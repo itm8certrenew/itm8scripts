@@ -25,6 +25,7 @@ $Paths = @("C:\itm8", "C:\ITR", "$([Environment]::GetFolderPath("Desktop"))"); #
 $ScriptTerminationSleep = 20;
 #
 ### Script
+Write-Host "`nLatest GitHub Commit Change: $( git --no-pager log -1 --format="%ai")`n"
 $ThisDomain = $null
 ## Add system functions
 Add-Type -AssemblyName System.Windows.Forms
@@ -42,7 +43,7 @@ Function Lookup-SSLCerts {
   param ($fDomains, $fThisDomain, $fSSLPorts)
   $Timer01 = [System.Diagnostics.Stopwatch]::StartNew() #TIMER
   $results = {};
-  Write-Host "`n  Starting SSLCert-lookup for: $(($fDomains).count) DNS-Records/Domains`n";
+  Write-Host "`n  Starting SSLCert-lookup for Domain: $fThisDomain - DNS-Records: $(($fDomains).count) - Start Time: $(get-date -f "yyyy-MM-dd HH.mm")`n";
   ForEach ($Domain in $fDomains) { # 2025-05-04 /JOHHO
     [Array]$ArgumentList = @($Domain, $fThisDomain, $fSSLPorts)
     $ScriptBlock11 = {
@@ -481,9 +482,19 @@ if (-not $Domains) {
 
 ## Lookup-SSLCerts
 $results = Lookup-SSLCerts -fDomain $Domains -fThisDomain $ThisDomain -fSSLPorts $SSLPorts
+<#Column Order
+Order 2025-03-31	0			1			2					3					4		5		6			7					8			9						10						11			12			13				14				15				16					17		18		19		20		21		22
+Order 2025-03-31	Hostname	ExpectedIP	ResolvedIPAddress	ResolvedPTRAddress	Port	Valid	Response	SignatureAlgorithm	Thumbprint	SubjectName				SubjectAlternativeName	IssuerName	NotBefore	ExpireDate		ExpireInDays	Verify			MatchesHostname		Ssl2	Ssl3	Tls		Tls11	Tls12	Tls13
+#
+Order 2025-05-15	0			1			2					3					4		5		6			7					8			9						10						11			12			13				14				15				16					17		18		19		20		21		22
+Order 2025-05-15	Hostname	ExpectedIP	ResolvedIPAddress	ResolvedPTRAddress	Port	Valid	Response	ExpireDate			SubjectName	SubjectAlternativeName	IssuerName				Thumbprint	NotBefore	ExpireInDays	Verify			MatchesHostname	SignatureAlgorithm	Ssl2	Ssl3	Tls		Tls11	Tls12	Tls13
+#
+#>
 
 # 2025-03-31 /JOHHO: $formattetResult = $results| Select-Object ExpectedIP, ResolvedIPAddress, ResolvedPTRAddress, @{Name = "Hostname"; Expression = { $_.ComputerName } }, @{Name = "Port"; Expression = { $_.Port } }, Valid, Response, SignatureAlgorithm, Thumbprint, SubjectName, @{Name = "SubjectAlternativeName"; Expression = { ($_.SubjectAlternativeName) } }, IssuerName, NotBefore, NotAfter, ExpireInDays, Verify, MatchesHostname, Ssl2, Ssl3, tls, Tls11, Tls12, Tls13
-$formattetResult = $results | Sort ComputerName -Descending | Select-Object @{Name = "Hostname"; Expression = { $_.ComputerName } }, ExpectedIP, ResolvedIPAddress, ResolvedPTRAddress, @{Name = "Port"; Expression = { $_.Port } }, Valid, Response, SignatureAlgorithm, Thumbprint, SubjectName, @{Name = "SubjectAlternativeName"; Expression = { ($_.SubjectAlternativeName) } }, IssuerName, NotBefore, @{Name = "ExpireDate"; Expression = { $_.NotAfter } }, ExpireInDays, Verify, MatchesHostname, Ssl2, Ssl3, tls, Tls11, Tls12, Tls13
+# 2025-05-15 /JOHHO: $formattetResult = $results | Sort ComputerName -Descending | Select-Object @{Name = "Hostname"; Expression = { $_.ComputerName } }, ExpectedIP, ResolvedIPAddress, ResolvedPTRAddress, @{Name = "Port"; Expression = { $_.Port } }, Valid, Response, SignatureAlgorithm, Thumbprint, SubjectName, @{Name = "SubjectAlternativeName"; Expression = { ($_.SubjectAlternativeName) } }, IssuerName, NotBefore, @{Name = "ExpireDate"; Expression = { $_.NotAfter } }, ExpireInDays, Verify, MatchesHostname, Ssl2, Ssl3, tls, Tls11, Tls12, Tls13
+$formattetResult = $results | Sort ComputerName -Descending | Select-Object @{Name = "Hostname"; Expression = { $_.ComputerName } }, ExpectedIP, ResolvedIPAddress, ResolvedPTRAddress, @{Name = "Port"; Expression = { $_.Port } }, Valid, Response, @{Name = "ExpireDate"; Expression = { $_.NotAfter } }, SubjectName, @{Name = "SubjectAlternativeName"; Expression = { ($_.SubjectAlternativeName) } }, IssuerName, Thumbprint, NotBefore, ExpireInDays, Verify, MatchesHostname, SignatureAlgorithm, Ssl2, Ssl3, tls, Tls11, Tls12, Tls13
+
 
 $ReportName = "$($ThisDomain)_$(Get-Date -f yyyy-MM-dd-HHmmss)"
 
@@ -583,7 +594,8 @@ $header = @"
     // Iterate through rows and group by ID
     rows.forEach(row => {
         stats['TotalLookups']++
-        if (row.cells[17].textContent == "True") {
+// 202505-15 JOHHO        if (row.cells[17].textContent == "True") {
+        if (row.cells[16].textContent == "True") {
           stats['ssl2']++
         }
         if (row.cells[18].textContent == "True") {
@@ -610,18 +622,22 @@ $header = @"
         if ((row.cells[6].textContent == "True") && (row.cells[5].textContent == "True")) {
           stats['validCerts']++
         }
-        if (row.cells[11].textContent != "") {
+// 202505-15 JOHHO        if (row.cells[11].textContent != "") {
+        if (row.cells[10].textContent != "") {
         }
 
-        const id = row.cells[8].textContent; 
+// 202505-15 JOHHO        const id = row.cells[8].textContent; 
+        const id = row.cells[11].textContent; 
         if (!!id) {
           if (!groupedRows[id]) {
               groupedRows[id] = []; 
-
-                 if (stats['issuerCount'][extractOrganization(row.cells[11].textContent)]) {
-                  stats['issuerCount'][extractOrganization(row.cells[11].textContent)]++
+// 202505-15 JOHHO                 if (stats['issuerCount'][extractOrganization(row.cells[11].textContent)]) {
+                 if (stats['issuerCount'][extractOrganization(row.cells[10].textContent)]) {
+// 202505-15 JOHHO                  stats['issuerCount'][extractOrganization(row.cells[11].textContent)]++
+                  stats['issuerCount'][extractOrganization(row.cells[10].textContent)]++
                 } else {
-                  stats['issuerCount'][extractOrganization(row.cells[11].textContent)] = 1
+// 202505-15 JOHHO                  stats['issuerCount'][extractOrganization(row.cells[11].textContent)] = 1
+                  stats['issuerCount'][extractOrganization(row.cells[10].textContent)] = 1
                 }
           }
           groupedRows[id].push(row); 
@@ -800,8 +816,10 @@ $header = @"
             newRow.className = row.className;
 
             if (index === 0) {
-              newTable.setAttribute('data-expiredays', row.cells[14].textContent);
-              newTable.setAttribute('data-subjectname', row.cells[9].textContent);
+// 202505-15 JOHHO              newTable.setAttribute('data-expiredays', row.cells[14].textContent);
+              newTable.setAttribute('data-expiredays', row.cells[13].textContent);
+// 202505-15 JOHHO              newTable.setAttribute('data-subjectname', row.cells[9].textContent);
+			  newTable.setAttribute('data-subjectname', row.cells[8].textContent);
             }
             row.querySelectorAll('td').forEach(td => {
                 const newTd = document.createElement('td');
@@ -875,20 +893,25 @@ for (const id in groupedRows) {
         newRow.className = row.className;
 
         if (index === 0) {
-            // Set the data-expiredays from the first row's 14th cell
-            const expiredays = row.cells[14].textContent;
+// 202505-15 JOHHO            // Set the data-expiredays from the first row's 14th cell
+            // Set the data-expiredays from the first row's 13th cell
+// 202505-15 JOHHO            const expiredays = row.cells[14].textContent;
+            const expiredays = row.cells[13].textContent;
             newTable.setAttribute('data-expiredays', expiredays);
-            newTable.setAttribute('data-subjectname', row.cells[9].textContent);
+// 202505-15 JOHHO            newTable.setAttribute('data-subjectname', row.cells[9].textContent);
+            newTable.setAttribute('data-subjectname', row.cells[8].textContent);
          
             
             const headerOrganizationSpan = document.createElement('span');
-            headerOrganizationSpan.innerHTML = extractOrganization(row.cells[11].textContent);
+// 202505-15 JOHHO            headerOrganizationSpan.innerHTML = extractOrganization(row.cells[11].textContent);
+            headerOrganizationSpan.innerHTML = extractOrganization(row.cells[10].textContent);
             headerOrganizationSpan.title = "Issuer Organization"
             headerOrganizationSpan.classList.add('badge');
             headerOrganizationSpan.classList.add('bg-gray');
             cardHeader.appendChild(headerOrganizationSpan);
 
-            var CertValid = row.cells[15].textContent
+// 202505-15 JOHHO            var CertValid = row.cells[15].textContent
+            var CertValid = row.cells[14].textContent
             const headerValidSpan = document.createElement('span');
             headerValidSpan.classList.add('badge');
             headerValidSpan.title = "Chain Validation"
@@ -914,7 +937,8 @@ for (const id in groupedRows) {
             }
             cardHeader.appendChild(headerExpireSpan);
 
-            headerTitle.textContent = extractName(row.cells[9].textContent);
+// 202505-15 JOHHO            headerTitle.textContent = extractName(row.cells[9].textContent);
+            headerTitle.textContent = extractName(row.cells[8].textContent);
         }
         row.querySelectorAll('td').forEach(td => {
             const newTd = document.createElement('td');
@@ -1048,96 +1072,97 @@ $layout = @"
               <div class="card-body">
                 <div class="tab-content" id="custom-tabs-four-tabContent">
                   <div class="tab-pane fade active show" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
-                  <div class="row">
-                    <div class="col-sm-8">
-                      <div class="card">
-                        <div class="card-header" style="background-color: #6d20a3; color:white;">
-                          <h3 class="card-title">Statistics</h3>
-                        </div>
-                        <div class="card-body">
-                          <div id="StatisticsContainer" class="row">
-                          <div >
-                            <div class="chart col-sm-8 float-left"> 
-                              <h3>Response</h3>
-                              <p>Chart of port responses.</p>  
-                            </div>
-                            <div class="chart col-sm-3 float-right" id="ResponseChart-chart" style="width: 100%; height:100%">
-                                <canvas id="ResponseChart" width="150" height="150"></canvas>
-                            </div>
+                    <div class="row">
+                      <div class="col-sm-8">
+                        <div class="card">
+                          <div class="card-header" style="background-color: #6d20a3; color:white;">
+                            <h3 class="card-title">Statistics</h3>
                           </div>
-                          <hr>
-                          <div>
-                            <div class="chart col-sm-8 float-left"> 
-                              <h3>TLS Versions</h3>
-                              <p>Chart of TLS version compatibility. Total of all responses shown. <br> Any protocol below TLS 1.2 is seen a insecure.<br> Unsupported protocols are due to incompatibility of protocols or ciphers.</p>  
+                          <div class="card-body">
+                            <div id="StatisticsContainer" class="row">
+                              <div >
+                                <div class="chart col-sm-8 float-left"> 
+                                  <h3>Response</h3>
+                                  <p>Chart of port responses.</p>  
+                                </div>
+                                <div class="chart col-sm-3 float-right" id="ResponseChart-chart" style="width: 100%; height:100%">
+                                  <canvas id="ResponseChart" width="150" height="150"></canvas>
+                                </div>
+                              </div>
+                              <hr>
+                              <div>
+                                <div class="chart col-sm-8 float-left"> 
+                                  <h3>TLS Versions</h3>
+                                  <p>Chart of TLS version compatibility. Total of all responses shown. <br> Any protocol below TLS 1.2 is seen a insecure.<br> Unsupported protocols are due to incompatibility of protocols or ciphers.</p>  
+                                </div>
+                                <div class="chart col-sm-3 float-right" id="TlsChart-chart" style="width: 100%; height:100%">
+                                  <canvas id="TlsChart" width="150" height="150"></canvas>
+                                </div>
+                              </div>
+                              <hr>
+                              <div >
+                                <div class="chart col-sm-8 float-left"> 
+                                  <h3>Issuers</h3>
+                                  <p>Chart of organizations used for issuing SSL certificates.</p>  
+                                  <div id="organizationsTableContainer"></div>
+                                </div>
+                                <div class="chart col-sm-3 float-right" id="OrganizationChart-chart" style="width: 100%; height:100%">
+                                  <canvas id="OrganizaitionChart" width="150" height="150"></canvas>
+                                </div>
+                              </div>
                             </div>
-                            <div class="chart col-sm-3 float-right" id="TlsChart-chart" style="width: 100%; height:100%">
-                                <canvas id="TlsChart" width="150" height="150"></canvas>
-                            </div>
-                          </div>
-                          <hr>
-                          <div >
-                            <div class="chart col-sm-8 float-left"> 
-                              <h3>Issuers</h3>
-                              <p>Chart of organizations used for issuing SSL certificates.</p>  
-                              <div id="organizationsTableContainer"></div>
-                            </div>
-                            <div class="chart col-sm-3 float-right" id="OrganizationChart-chart" style="width: 100%; height:100%">
-                                <canvas id="OrganizaitionChart" width="150" height="150"></canvas>
-                            </div>
-                          </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-sm-4">
-                      <div class="card card-primary">
-                        <div class="card-header" style="background-color: #6d20a3; color:white;">
-                          <h3 class="card-title">Generating Machine Info</h3>
-                        </div>
-                        <div class="card-body">
-                         <div class="form-group">
-                            <label for="OSversion">Operation System:</label>
-                            <input type="text" id="OSversion" class="form-control" value="$(Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\' | Select-Object -ExpandProperty ProductName)" disabled="">
-                          </div>
-                          <hr>
-                          <h6>Supported TLS versions:</h6>
-                          <span title="tls1.0" class="badge $(if ($TLSversionSupport.tls10) {"bg-success"} else {"bg-danger"})">TLS1.0</span>
-                          <span title="tls1.1" class="badge $(if ($TLSversionSupport.tls11) {"bg-success"} else {"bg-danger"})">TLS1.1</span>
-                          <span title="tls1.2" class="badge $(if ($TLSversionSupport.tls12) {"bg-success"} else {"bg-danger"})">TLS1.2</span>
-                          <span title="tls1.3" class="badge $(if ($TLSversionSupport.tls13) {"bg-success"} else {"bg-danger"})">TLS1.3</span>
-
-                          $(if ($TLSversionSupport.values -contains $False) {"<div class='alert alert-warning' style='margin-top: 16px;'>The machine generating this report was unable to test all available TLS version(s), as the version(s) are unsupported by the operating system.</div>"})
-                          <hr>
-                          <div class="form-group">
-                            <label for="PrimaryDNS">Primary DNS:</label>
-                            <input type="text" id="PrimaryDNS" class="form-control" value="$($DNSservers[0]) $(if ($DNSserversPrimary) {"[$DNSserversPrimary]"})" disabled="">
-                          </div>
-                          <div class="form-group">
-                            <label for="SecondaryDNS">Secondary DNS:</label>
-                            <input type="text" id="PrimaryDNS" class="form-control" value="$($DNSservers[1]) $(if ($DNSserversSecondary) {"[$DNSserversSecondary]"})" disabled="">
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>    
+                      <div class="col-sm-4">
+                        <div class="card card-primary">
+                          <div class="card-header" style="background-color: #6d20a3; color:white;">
+                            <h3 class="card-title">Generating Machine Info</h3>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group">
+                              <label for="OSversion">Operation System:</label>
+                              <input type="text" id="OSversion" class="form-control" value="$(Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\' | Select-Object -ExpandProperty ProductName)" disabled="">
+                            </div>
+                            <hr>
+                            <h6>Supported TLS versions:</h6>
+                            <span title="tls1.0" class="badge $(if ($TLSversionSupport.tls10) {"bg-success"} else {"bg-danger"})">TLS1.0</span>
+                            <span title="tls1.1" class="badge $(if ($TLSversionSupport.tls11) {"bg-success"} else {"bg-danger"})">TLS1.1</span>
+                            <span title="tls1.2" class="badge $(if ($TLSversionSupport.tls12) {"bg-success"} else {"bg-danger"})">TLS1.2</span>
+                            <span title="tls1.3" class="badge $(if ($TLSversionSupport.tls13) {"bg-success"} else {"bg-danger"})">TLS1.3</span>
+                            $(if ($TLSversionSupport.values -contains $False) {"<div class='alert alert-warning' style='margin-top: 16px;'>The machine generating this report was unable to test all available TLS version(s), as the version(s) are unsupported by the operating system.</div>"})
+                            <hr>
+                            <div class="form-group">
+                              <label for="PrimaryDNS">Primary DNS:</label>
+                              <input type="text" id="PrimaryDNS" class="form-control" value="$($DNSservers[0]) $(if ($DNSserversPrimary) {"[$DNSserversPrimary]"})" disabled="">
+                            </div>
+                            <div class="form-group">
+                              <label for="SecondaryDNS">Secondary DNS:</label>
+                              <input type="text" id="PrimaryDNS" class="form-control" value="$($DNSservers[1]) $(if ($DNSserversSecondary) {"[$DNSserversSecondary]"})" disabled="">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>    
                   </div>
+                  // Pane: SSL Certificates
                   <div class="tab-pane fade" id="custom-tabs-four-profile" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab">
                     <div style="padding-bottom: 15px;"> 
                       <span title="SSL Certificate is ready for renewal" class="badge" style="background-color: yellow; color: black;">Less than 30 days</span>
                       <span title="SSL Certificate has expired" class="badge" style="background-color: red; color: black;">Expired</span>
                       <span title="SSL Certificate failed validation" class="badge" style="background-color: orange; color: black;">Not valid</span>
                     </div>  
-                     $Table
+                    $Table
                   </div>
+                  // Pane: All Lookups
                   <div class="tab-pane fade" id="custom-tabs-four-settings" role="tabpanel" aria-labelledby="custom-tabs-four-settings-tab">
-                     <div id="tablesContainer"></div>
+                    <div id="tablesContainer"></div>
                   </div>
+                  // Pane: Input Data
                   <div class="tab-pane fade" id="custom-tabs-four-parsing" role="tabpanel" aria-labelledby="custom-tabs-four-parsing-tab">
-                     <div>
+                    <div>
                       $(($dnsZoneContentParsed | ConvertTo-Html -Fragment -As List).Replace("<td>*:</td>","").Replace("<hr>","").Replace('<table>', '<table id="parsedTable" class="table text-nowrap">')) 
-                     </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1151,7 +1176,6 @@ $layout = @"
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-
 </div>
 <!-- ./wrapper -->
 
