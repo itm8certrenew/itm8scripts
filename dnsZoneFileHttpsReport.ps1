@@ -1071,7 +1071,8 @@ $layout = @"
               </div>
               <div class="card-body">
                 <div class="tab-content" id="custom-tabs-four-tabContent">
-                  <div class="tab-pane fade active show" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
+                  <!-- Pane: Overview -->
+		  <div class="tab-pane fade active show" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
                     <div class="row">
                       <div class="col-sm-8">
                         <div class="card">
