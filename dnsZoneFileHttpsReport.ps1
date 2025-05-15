@@ -25,7 +25,6 @@ $Paths = @("C:\itm8", "C:\ITR", "$([Environment]::GetFolderPath("Desktop"))"); #
 $ScriptTerminationSleep = 20;
 #
 ### Script
-Write-Host "`nLatest GitHub Commit Change: $( git --no-pager log -1 --format="%ai")`n"
 $ThisDomain = $null
 ## Add system functions
 Add-Type -AssemblyName System.Windows.Forms
@@ -1145,7 +1144,7 @@ $layout = @"
                       </div>
                     </div>    
                   </div>
-                  // Pane: SSL Certificates
+                  <!--  Pane: SSL Certificates -->
                   <div class="tab-pane fade" id="custom-tabs-four-profile" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab">
                     <div style="padding-bottom: 15px;"> 
                       <span title="SSL Certificate is ready for renewal" class="badge" style="background-color: yellow; color: black;">Less than 30 days</span>
@@ -1154,11 +1153,11 @@ $layout = @"
                     </div>  
                     $Table
                   </div>
-                  // Pane: All Lookups
+                  <!--  Pane: All Lookups -->
                   <div class="tab-pane fade" id="custom-tabs-four-settings" role="tabpanel" aria-labelledby="custom-tabs-four-settings-tab">
                     <div id="tablesContainer"></div>
                   </div>
-                  // Pane: Input Data
+                  <!--  Pane: Input Data -->
                   <div class="tab-pane fade" id="custom-tabs-four-parsing" role="tabpanel" aria-labelledby="custom-tabs-four-parsing-tab">
                     <div>
                       $(($dnsZoneContentParsed | ConvertTo-Html -Fragment -As List).Replace("<td>*:</td>","").Replace("<hr>","").Replace('<table>', '<table id="parsedTable" class="table text-nowrap">')) 
