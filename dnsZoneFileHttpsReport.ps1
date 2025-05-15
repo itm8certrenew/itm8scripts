@@ -25,6 +25,7 @@ $Paths = @("C:\itm8", "C:\ITR", "$([Environment]::GetFolderPath("Desktop"))"); #
 $ScriptTerminationSleep = 20;
 #
 ### Script
+cls;
 $ThisDomain = $null
 ## Add system functions
 Add-Type -AssemblyName System.Windows.Forms
