@@ -27,6 +27,7 @@ $ScriptTerminationSleep = 20;
 #
 ### Script
 cls;
+Write-Host "`n  DNS-Lookup will verify certificates at ports:`n  $($SSLPorts)"
 $ThisDomain = $null
 ## Add system functions
 Add-Type -AssemblyName System.Windows.Forms
