@@ -3,10 +3,11 @@
 <#
 SSL Ports:
 443, 444
-5443, 5444
-8443, 8444
-9443, 9444
-10443, 10444
+4443, 4444 - Added 2025-06-10
+5443, 5444 - Added 2025-06-04
+8443, 8444 - Added 2025-05-04
+9443, 9444 - Added 2025-05-04
+10443, 10444 - Added 2025-05-04
 
 NAV & Business Central Ports:
 7045 - Business Central Port
@@ -21,7 +22,7 @@ NAV & Business Central Ports:
 #>
 
 ### Variables
-$SSLPorts = @("443", "444", "5443", "5444", "8443", "8444", "9443", "9444", "10443", "10444", "7045", "7046", "7047", "7048", "7295", "7397", "7747", "8145", "8146"); # $SSLPorts-functionallity Added 2025-05-04 /JOHHO
+$SSLPorts = @("443", "444", "4443", "4444", "5443", "5444", "8443", "8444", "9443", "9444", "10443", "10444", "7045", "7046", "7047", "7048", "7295", "7397", "7747", "8145", "8146"); # $SSLPorts-functionallity Added 2025-05-04 /JOHHO
 $Paths = @("C:\itm8", "C:\ITR", "$([Environment]::GetFolderPath("Desktop"))"); # 2025-05-06 /JOHHO
 $ScriptTerminationSleep = 20;
 #
